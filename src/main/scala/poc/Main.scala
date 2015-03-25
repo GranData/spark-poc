@@ -11,11 +11,19 @@ import scala.language.postfixOps
 
 import java.sql.Timestamp
 
+import org.rogach.scallop._
+
+class Conf(arguments: Seq[String]) extends ScallopConf(arguments) {
+  val baseDir: ScallopOption[String] = opt[String]("baseDir", required = false, default=Some("/"))
+}
+
+
 case class VoiceRecord(contractNumber: String, mdn: String, source: String, target: String, durationSeconds: Int, incomeWithoutTaxes: Float, operator: String, redirect:String, timestamp: Timestamp)
 
 object Main {
+  // WARNING: This is not a good idea, will transverse every directory!
   def getFileTree(f: File): Stream[File] =
-    f #:: (if (f.isDirectory) f.listFiles().toStream.flatMap(getFileTree)
+    f #:: (if (f.isDirectory) Option(f.listFiles()).map(_.toStream.flatMap(getFileTree)).getOrElse(Stream.empty)
     else Stream.empty)
 
   def time[A](a: => A) = {
@@ -27,16 +35,21 @@ object Main {
   }
 
   def main(args: Array[String]) = {
+    val appConf = new Conf(args)
+    val baseDir = appConf.baseDir()
+
     // WARNING: I am doing nothing about the timezone or the encoding.\
     // WARNING: Quick and easy but not efficient. Should not be used in production.
-    val linksFileNames = getFileTree(new File("/home/gustavo/work/gd/new-pipeline/")).filter { file =>
+    val linksFileNames = getFileTree(new File(baseDir)).filter { file =>
       !(".*/data[1-4]/iusacell/.*/.*/voice/.*.gz".r findFirstIn file.getAbsolutePath).isEmpty
     }.map(_.getAbsolutePath)
 
     println("Files :")
     linksFileNames.foreach(println)
 
-    val conf = new SparkConf().setMaster("local[4]").setAppName("Simple Application")
+    println("Finished files")
+
+    val conf = new SparkConf().setAppName("POC")
     val sc = new SparkContext(conf)
 
 
@@ -45,7 +58,14 @@ object Main {
     import sqlContext.implicits._
 
     // Just drop header line of each file and the merge them. It is not pretty. We should find a better way. Also. we must validate header using expected schema.
-    val dataFile = linksFileNames.map { f=>sc.textFile(f).zipWithIndex.filter(_._2 >= 10L).map(_._1)  }.reduce(_++_)
+
+
+//    val rdd = sc.loadFiles("/data*/iusacell/*/*", converter)
+
+    val rdd = sc.textFile("/data*/iusacell/*/*").map(_.split(","))
+
+    val dataFile = sc.union(linksFileNames.map { f=>sc.textFile(f).zipWithIndex.filter(_._2 > 1).map(_._1) })
+
 
     val dateFormat = new SimpleDateFormat("dd/MM/yyyy hh:mm:ss a")
     val symbols = new DateFormatSymbols(Locale.getDefault())
@@ -128,6 +148,12 @@ object Main {
         )
 
     }
+    try {
+      new File("/tmp/output.txt").delete()
+    } catch {
+      case _:Throwable =>
+    }
+
     time {
       voiceData.map { record =>
         import com.github.nscala_time.time.Imports._
