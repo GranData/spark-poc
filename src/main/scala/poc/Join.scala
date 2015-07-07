@@ -10,5 +10,11 @@ object Join extends App {
   val rdd1 = sc.parallelize(List((1,"uno"), (2,"dos"), (2,"two")))
   val rdd2 = sc.parallelize(List((3,"tres"), (2,"dos"), (2,"dos'")))
   
+  val rr = rdd1.mapPartitions(part => {
+    part.map{case (id, value) => throw new RuntimeException}
+  })
+  
+  rr.saveAsTextFile("/tmp/rr")
+  
   rdd1.fullOuterJoin(rdd2).collect().foreach(println(_))
 }
