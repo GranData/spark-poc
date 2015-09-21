@@ -1,6 +1,8 @@
-TryingLzoWithSpark (src/main/scala/poc/TryingLzoWithSpark.scala)
+TryingLzoWithSpark 
 ==================
-Running a example of reading a Lzo file from Spark using Intellij Idea. 
+(src/main/scala/poc/TryingLzoWithSpark.scala)
+
+TryingLzoWithSpark.scala contains a example for reading a splittable Lzo file from Spark using Intellij Idea. 
 
 
 ###Pre-conditions
