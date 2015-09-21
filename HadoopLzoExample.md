@@ -1,8 +1,8 @@
 TryingLzoWithSpark 
 ==================
-(src/main/scala/poc/TryingLzoWithSpark.scala)
+(https://github.com/GranData/spark-poc/blob/master/src/main/scala/poc/TryingLzoWithSpark.scala)
 
-TryingLzoWithSpark.scala contains a example for reading a splittable Lzo file from Spark using Intellij Idea. 
+This project contains a example for reading a splittable Lzo file from Spark using Intellij Idea. 
 
 
 ###Pre-conditions
