@@ -1,4 +1,4 @@
-TryingLzoWithSpark
+TryingLzoWithSpark (src/main/scala/poc/TryingLzoWithSpark.scala)
 ==================
 Running a example of reading a Lzo file from Spark using Intellij Idea. 
 
@@ -9,19 +9,19 @@ Running a example of reading a Lzo file from Spark using Intellij Idea.
 - Have hadoop (https://github.com/twitter/hadoop-lzo) builded. And generate native libs:
 (/path/to/hadoop-lzo/target/native/Linux-amd64-64/lib)
 
-Anyway in this project you can find this libraries in: src/main/resources/hadoop-lzo/native/Linux-amd64-64
-
+Anyway in this project you can find this libraries in: 
+	src/main/resources/hadoop-lzo/native/Linux-amd64-64
 
 
 ###Hdfs configs
 
-- hadoop-env.sh should contain this at the end of file:
+- **hadoop-env.sh** should contain this at the end of file:
 ```
 	export HADOOP_CLASSPATH=$HADOOP_CLASSPATH:/path/to/hadoop-lzo-0.4.19.jar
 	export JAVA_LIBRARY_PATH=/path/to/hadoop-lzo/target/native/Linux-amd64-64/lib:/path/to/hadoop-2.6.0/lib/native
 ```
 
-- core-site.xml should contain:
+- **core-site.xml** should contain:
 ```
   <property>
     <name>io.compression.codecs</name>
