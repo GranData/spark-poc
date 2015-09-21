@@ -46,8 +46,9 @@ core-site.xml should contain:
 	hdfs dfs -ls /input
 
 Must See something like this:
-``` -rw-r--r--   1 marcos supergroup  171236594 2015-09-21 18:47 /input/customers.txt.lzo
-    -rw-r--r--   1 marcos supergroup      10768 2015-09-21 18:50 /input/customers.txt.lzo.index
+```
+	-rw-r--r--   1 marcos supergroup  171236594 2015-09-21 18:47 /input/customers.txt.lzo
+	-rw-r--r--   1 marcos supergroup      10768 2015-09-21 18:50 /input/customers.txt.lzo.index
 ```
 
 
